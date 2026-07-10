@@ -832,7 +832,7 @@
       const payload = signupPayload(row, motherName);
       return `<div class="signup-card active" data-signup-card="${payload}">
         <p class="signup-card-title">נרשמת ל־${escapeHtml(row.date)} (${escapeHtml(row.day)}) עבור ${escapeHtml(motherName)}</p>
-        <p class="hint">הכניסי שם וזה יישמר ישירות ברשימה. בלי לפתוח את הגיליון.</p>
+        <p class="hint">הכניסי את שמך כדי להשתבץ לתאריך זה</p>
         <form data-signup-form="${payload}">
           <input class="input" name="name" type="text" placeholder="השם שלך" autocomplete="name" required />
           <button class="primary" type="submit">שמירה</button>
