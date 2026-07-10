@@ -629,7 +629,7 @@
     const motherButtons = document.querySelector('#motherButtons');
 
     function keyForMotherName(name) {
-      return normalize(name).replace(/\s+/g, '-');
+      return String(name || '').trim().toLowerCase().replace(/\s+/g, '-');
     }
 
     function ensureMother(name) {
