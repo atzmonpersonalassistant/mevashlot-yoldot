@@ -476,45 +476,50 @@
   </main>
 
   <script>
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/14ZmelV6_zQOY_7K8E4QLKzhYgWiPdx_q93MHK8zr2u4/gviz/tq?tqx=out:csv&sheet=%D7%91%D7%99%D7%A9%D7%95%D7%9C%20%D7%9C%D7%9E%D7%99%D7%94%20%D7%95%D7%A6%D7%95%D7%A3';
+
     const mothers = {
       maya: {
         name: 'מיה',
-        rows: [
-          { cook: 'מירב טל', date: '5.7.26', day: 'ראשון' },
-          { cook: '', date: '6.7.26', day: 'שני' },
-          { cook: 'גלי גבים', date: '7.7.26', day: 'שלישי' },
-          { cook: '', date: '8.7.26', day: 'רביעי' },
-          { cook: 'אלין', date: '9.7.26', day: 'חמישי' },
-          { cook: '', date: '10.7.26', day: 'שישי' },
-          { cook: '', date: '11.7.26', day: 'שבת' },
-          { cook: 'סמדר אגסי', date: '12.7.26', day: 'ראשון' },
-          { cook: '', date: '13.7.26', day: 'שני' },
-          { cook: '', date: '14.7.26', day: 'שלישי' },
-          { cook: '', date: '15.7.26', day: 'רביעי' },
-          { cook: 'דביר עצמון שתיל', date: '16.7.26', day: 'חמישי' },
-          { cook: 'מעיין צור (משהו מתוק)', date: '17.7.26', day: 'שישי' },
-          { cook: '', date: '18.7.26', day: 'שבת' },
-          { cook: 'כרמל אגסי', date: '19.7.26', day: 'ראשון' },
-          { cook: '', date: '20.7.26', day: 'שני' },
-          { cook: 'קרן איילון שלח', date: '21.7.26', day: 'שלישי' },
-          { cook: '', date: '22.7.26', day: 'רביעי' },
-          { cook: 'מעיין עמידור', date: '23.7.26', day: 'חמישי' },
-          { cook: '', date: '24.7.26', day: 'שישי' },
-          { cook: '', date: '25.7.26', day: 'שבת' },
-          { cook: 'בר שלזינגר', date: '26.7.26', day: 'ראשון' },
-          { cook: '', date: '27.7.26', day: 'שני' },
-          { cook: 'נטע אגסי', date: '28.7.26', day: 'שלישי' },
-          { cook: '', date: '29.7.26', day: 'רביעי' },
-          { cook: 'פנינה צור', date: '30.7.26', day: 'חמישי' },
-          { cook: '', date: '31.7.26', day: 'שישי' },
-          { cook: '', date: '1.8.26', day: 'שבת' },
-          { cook: '', date: '2.8.26', day: 'ראשון' },
-          { cook: 'נופית אלון', date: '3.8.26', day: 'שני' },
-          { cook: '', date: '4.8.26', day: 'שלישי' },
-          { cook: 'ירדן עמידור', date: '5.8.26', day: 'רביעי' }
-        ]
+        rows: []
       }
     };
+
+    const fallbackMayaRows = [
+      { cook: 'מירב טל', date: '5.7.26', day: 'ראשון' },
+      { cook: '', date: '6.7.26', day: 'שני' },
+      { cook: 'גלי גבים', date: '7.7.26', day: 'שלישי' },
+      { cook: '', date: '8.7.26', day: 'רביעי' },
+      { cook: 'אלין', date: '9.7.26', day: 'חמישי' },
+      { cook: '', date: '10.7.26', day: 'שישי' },
+      { cook: '', date: '11.7.26', day: 'שבת' },
+      { cook: 'סמדר אגסי', date: '12.7.26', day: 'ראשון' },
+      { cook: '', date: '13.7.26', day: 'שני' },
+      { cook: '', date: '14.7.26', day: 'שלישי' },
+      { cook: '', date: '15.7.26', day: 'רביעי' },
+      { cook: 'דביר עצמון שתיל', date: '16.7.26', day: 'חמישי' },
+      { cook: 'מעיין צור (משהו מתוק)', date: '17.7.26', day: 'שישי' },
+      { cook: '', date: '18.7.26', day: 'שבת' },
+      { cook: 'כרמל אגסי', date: '19.7.26', day: 'ראשון' },
+      { cook: '', date: '20.7.26', day: 'שני' },
+      { cook: 'קרן איילון שלח', date: '21.7.26', day: 'שלישי' },
+      { cook: '', date: '22.7.26', day: 'רביעי' },
+      { cook: 'מעיין עמידור', date: '23.7.26', day: 'חמישי' },
+      { cook: '', date: '24.7.26', day: 'שישי' },
+      { cook: '', date: '25.7.26', day: 'שבת' },
+      { cook: 'בר שלזינגר', date: '26.7.26', day: 'ראשון' },
+      { cook: '', date: '27.7.26', day: 'שני' },
+      { cook: 'נטע אגסי', date: '28.7.26', day: 'שלישי' },
+      { cook: '', date: '29.7.26', day: 'רביעי' },
+      { cook: 'פנינה צור', date: '30.7.26', day: 'חמישי' },
+      { cook: '', date: '31.7.26', day: 'שישי' },
+      { cook: '', date: '1.8.26', day: 'שבת' },
+      { cook: '', date: '2.8.26', day: 'ראשון' },
+      { cook: 'נופית אלון', date: '3.8.26', day: 'שני' },
+      { cook: '', date: '4.8.26', day: 'שלישי' },
+      { cook: 'ירדן עמידור', date: '5.8.26', day: 'רביעי' }
+    ];
+
 
     const screens = {
       role: document.querySelector('#roleScreen'),
@@ -546,6 +551,69 @@
     const escapeHtml = value => String(value).replace(/[&<>'"]/g, ch => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
     }[ch]));
+
+    function parseCsv(text) {
+      const rows = [];
+      let row = [];
+      let cell = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        const next = text[i + 1];
+
+        if (ch === '"') {
+          if (inQuotes && next === '"') {
+            cell += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (ch === ',' && !inQuotes) {
+          row.push(cell);
+          cell = '';
+        } else if ((ch === '
+' || ch === '') && !inQuotes) {
+          if (ch === '' && next === '
+') i++;
+          row.push(cell);
+          if (row.some(value => value.trim())) rows.push(row);
+          row = [];
+          cell = '';
+        } else {
+          cell += ch;
+        }
+      }
+
+      row.push(cell);
+      if (row.some(value => value.trim())) rows.push(row);
+      return rows;
+    }
+
+    function rowsFromSheetCsv(csvText) {
+      return parseCsv(csvText)
+        .slice(1)
+        .map(row => ({
+          date: (row[0] || '').trim(),
+          day: (row[1] || '').trim(),
+          cook: (row[2] || '').trim()
+        }))
+        .filter(row => row.date && row.day)
+        .filter(row => parseLocalDate(row.date) && parseLocalDate(row.date) <= parseLocalDate('5.8.26'));
+    }
+
+    async function loadSheetData() {
+      mothers.maya.rows = fallbackMayaRows;
+      try {
+        const response = await fetch(`${SHEET_CSV_URL}&cacheBust=${Date.now()}`, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`Sheet request failed: ${response.status}`);
+        const text = await response.text();
+        const rows = rowsFromSheetCsv(text);
+        if (rows.length) mothers.maya.rows = rows;
+      } catch (error) {
+        console.warn('Using fallback sheet data', error);
+      }
+    }
 
     function parseLocalDate(value) {
       const parts = String(value).split('.').map(part => Number(part));
@@ -695,12 +763,20 @@
       listEmpty.style.display = count === 0 ? 'block' : 'none';
     }
 
+    loadSheetData();
+
     document.querySelectorAll('[data-role]').forEach(button => {
-      button.addEventListener('click', () => setRole(button.dataset.role));
+      button.addEventListener('click', async () => {
+        await loadSheetData();
+        setRole(button.dataset.role);
+      });
     });
 
     document.querySelectorAll('[data-mother]').forEach(button => {
-      button.addEventListener('click', () => renderMotherList(button.dataset.mother));
+      button.addEventListener('click', async () => {
+        await loadSheetData();
+        renderMotherList(button.dataset.mother);
+      });
     });
 
     document.querySelectorAll('[data-go="role"]').forEach(button => {
