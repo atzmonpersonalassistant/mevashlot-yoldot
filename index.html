@@ -4,17 +4,19 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>רשימת מבשלות ליולדות</title>
-  <meta name="description" content="רשימת מבשלות ליולדות - אתר סטטי פשוט ונקי" />
+  <meta name="description" content="רשימת מבשלות ליולדות" />
   <style>
     :root {
       --bg: #fff7ed;
-      --bg-soft: #fffbf5;
       --text: #2f241f;
       --muted: #7c6a5f;
-      --card: rgba(255,255,255,0.78);
+      --card: rgba(255,255,255,0.82);
       --border: #f0d8c3;
       --accent: #d97706;
+      --accent-dark: #9a5510;
       --accent-soft: #fed7aa;
+      --green: #15803d;
+      --green-soft: #dcfce7;
       --shadow: 0 20px 60px rgba(92, 48, 18, 0.12);
       --radius: 24px;
     }
@@ -49,7 +51,7 @@
       border: 1px solid var(--border);
       background: rgba(255,255,255,0.62);
       color: var(--accent);
-      font-weight: 700;
+      font-weight: 800;
       padding: 8px 14px;
       border-radius: 999px;
       font-size: 14px;
@@ -70,6 +72,61 @@
       max-width: 720px;
     }
 
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 26px;
+    }
+
+    .choice {
+      border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      min-height: 210px;
+      display: grid;
+      align-content: space-between;
+      gap: 22px;
+      cursor: pointer;
+      color: inherit;
+      text-align: right;
+      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .choice:hover,
+    .choice:focus-visible {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+      box-shadow: 0 24px 70px rgba(92, 48, 18, 0.18);
+      outline: none;
+    }
+
+    .choice-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      background: var(--accent-soft);
+      display: grid;
+      place-items: center;
+      font-size: 26px;
+    }
+
+    .choice h2 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .choice p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
     .panel {
       background: var(--card);
       border: 1px solid var(--border);
@@ -79,9 +136,40 @@
       overflow: hidden;
     }
 
-    .toolbar {
+    .nav {
       display: flex;
-      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 18px 0 22px;
+    }
+
+    button, .button {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--text);
+      padding: 11px 16px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+    }
+
+    button:hover, .button:hover { border-color: var(--accent); }
+    button.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .back {
+      color: var(--accent-dark);
+      background: rgba(255,255,255,0.6);
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr minmax(220px, 340px);
       gap: 16px;
       align-items: center;
       padding: 18px;
@@ -92,10 +180,13 @@
     .count {
       color: var(--muted);
       font-size: 15px;
+      line-height: 1.5;
     }
 
+    .count strong { color: var(--text); }
+
     .search {
-      width: min(340px, 100%);
+      width: 100%;
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 12px 14px;
@@ -124,23 +215,27 @@
     th {
       color: var(--muted);
       font-size: 14px;
-      font-weight: 800;
+      font-weight: 900;
       background: rgba(255,255,255,0.44);
     }
 
-    td {
-      font-size: 17px;
-    }
-
+    td { font-size: 17px; }
     tr:last-child td { border-bottom: none; }
 
-    .name {
-      font-weight: 800;
-    }
+    .name { font-weight: 850; }
+    .date { color: var(--muted); white-space: nowrap; }
 
-    .date {
-      color: var(--muted);
-      white-space: nowrap;
+    .open-slot {
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--green);
+      font-size: 14px;
+      font-weight: 850;
     }
 
     .empty {
@@ -151,27 +246,12 @@
       border-top: 1px solid var(--border);
     }
 
-    footer {
-      margin-top: 20px;
-      color: var(--muted);
-      font-size: 14px;
-      text-align: center;
-    }
-
-    @media (max-width: 680px) {
+    @media (max-width: 720px) {
       .page { padding-top: 30px; }
+      .choice-grid { grid-template-columns: 1fr; }
+      .toolbar { grid-template-columns: 1fr; }
 
-      .toolbar {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
-      .search { width: 100%; }
-
-      table, thead, tbody, tr, th, td {
-        display: block;
-      }
-
+      table, thead, tbody, tr, th, td { display: block; }
       thead { display: none; }
 
       tr {
@@ -180,17 +260,13 @@
       }
 
       tr:last-child { border-bottom: none; }
-
-      td {
-        border: none;
-        padding: 4px 0;
-      }
+      td { border: none; padding: 4px 0; }
 
       td::before {
         display: block;
         color: var(--muted);
         font-size: 13px;
-        font-weight: 800;
+        font-weight: 900;
         margin-bottom: 2px;
       }
 
@@ -201,82 +277,197 @@
 </head>
 <body>
   <main class="page">
-    <header>
-      <div class="badge">קהילה • אוכל • עזרה</div>
-      <h1>רשימת מבשלות ליולדות</h1>
-      <p class="subtitle">
-        רשימה פשוטה ונוחה למעקב אחרי מי מבשלת ומתי. אפשר לעדכן את השמות והתאריכים ישירות בקובץ האתר.
-      </p>
-    </header>
+    <section id="roleScreen" class="screen active" aria-label="בחירת תפקיד">
+      <header>
+        <div class="badge">רשימת מבשלות ליולדות</div>
+        <h1>מה תרצי לעשות?</h1>
+        <p class="subtitle">בחרי אם את מבשלת או יולדת, ומשם נציג את הרשימה הרלוונטית בצורה פשוטה ונוחה.</p>
+      </header>
 
-    <section class="panel" aria-label="רשימת מבשלות">
-      <div class="toolbar">
-        <div class="count"><span id="visibleCount">8</span> מבשלות ברשימה</div>
-        <input class="search" id="search" type="search" placeholder="חיפוש לפי שם או תאריך…" aria-label="חיפוש" />
+      <div class="choice-grid">
+        <button class="choice" type="button" data-role="cook">
+          <span class="choice-icon">🍲</span>
+          <span>
+            <h2>אני מבשלת</h2>
+            <p>בחרי יולדת וראי מי כבר משובצת ומתי יש תאריכים פנויים.</p>
+          </span>
+        </button>
+
+        <button class="choice" type="button" data-role="mother">
+          <span class="choice-icon">🤱</span>
+          <span>
+            <h2>אני יולדת</h2>
+            <p>בחרי את שמך וראי את רשימת המבשלות והתאריכים שלך.</p>
+          </span>
+        </button>
       </div>
-
-      <table>
-        <thead>
-          <tr>
-            <th>שם המבשלת</th>
-            <th>תאריך</th>
-          </tr>
-        </thead>
-        <tbody id="rows">
-          <tr>
-            <td class="name">נועה כהן</td>
-            <td class="date">12.07.2026</td>
-          </tr>
-          <tr>
-            <td class="name">מיכל לוי</td>
-            <td class="date">14.07.2026</td>
-          </tr>
-          <tr>
-            <td class="name">יעל אברהם</td>
-            <td class="date">16.07.2026</td>
-          </tr>
-          <tr>
-            <td class="name">דנה רוזן</td>
-            <td class="date">18.07.2026</td>
-          </tr>
-          <tr>
-            <td class="name">תמר ביטון</td>
-            <td class="date">21.07.2026</td>
-          </tr>
-          <tr>
-            <td class="name">רונית פרידמן</td>
-            <td class="date">23.07.2026</td>
-          </tr>
-          <tr>
-            <td class="name">שירה מלכה</td>
-            <td class="date">26.07.2026</td>
-          </tr>
-          <tr>
-            <td class="name">אפרת גולן</td>
-            <td class="date">28.07.2026</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="empty" id="empty">לא נמצאו תוצאות לחיפוש הזה.</div>
     </section>
 
-    <footer>
-      נבנה כאתר סטטי פשוט ב־GitHub Pages
-    </footer>
+    <section id="motherScreen" class="screen" aria-label="בחירת יולדת">
+      <header>
+        <div class="badge" id="roleBadge">בחירת יולדת</div>
+        <h1 id="motherTitle">לאיזו יולדת?</h1>
+        <p class="subtitle" id="motherSubtitle">בחרי יולדת כדי לראות את רשימת המבשלות והתאריכים.</p>
+      </header>
+
+      <div class="nav">
+        <button class="back" type="button" id="backToRoles">חזרה</button>
+        <button type="button" data-mother="maya">מיה</button>
+        <button type="button" data-mother="sharon">שרון</button>
+      </div>
+    </section>
+
+    <section id="listScreen" class="screen" aria-label="רשימת מבשלות">
+      <header>
+        <div class="badge" id="listBadge">רשימת מבשלות</div>
+        <h1 id="listTitle">רשימת המבשלות</h1>
+        <p class="subtitle" id="listSubtitle">אפשר לחפש לפי שם המבשלת, שם היולדת או תאריך.</p>
+      </header>
+
+      <div class="nav">
+        <button class="back" type="button" id="backToMothers">בחירת יולדת אחרת</button>
+        <button class="back" type="button" id="backHome">התחלה</button>
+      </div>
+
+      <section class="panel">
+        <div class="toolbar">
+          <div class="count"><strong id="visibleCount">0</strong> שורות מוצגות עבור <strong id="selectedMotherName"></strong></div>
+          <input class="search" id="search" type="search" placeholder="חיפוש לפי שם, יולדת או תאריך…" aria-label="חיפוש" />
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>שם המבשלת</th>
+              <th>תאריך</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="empty" id="empty">לא נמצאו תוצאות לחיפוש הזה.</div>
+      </section>
+    </section>
   </main>
 
   <script>
+    const mothers = {
+      maya: {
+        name: 'מיה',
+        rows: [
+          { cook: 'מירב טל', date: '5.7.26, ראשון' },
+          { cook: '', date: '6.7.26, שני' },
+          { cook: 'גלי גבים', date: '7.7.26, שלישי' },
+          { cook: '', date: '8.7.26, רביעי' },
+          { cook: 'אלין', date: '9.7.26, חמישי' },
+          { cook: '', date: '10.7.26, שישי' },
+          { cook: '', date: '11.7.26, שבת' },
+          { cook: 'סמדר אגסי', date: '12.7.26, ראשון' },
+          { cook: '', date: '13.7.26, שני' },
+          { cook: '', date: '14.7.26, שלישי' },
+          { cook: '', date: '15.7.26, רביעי' },
+          { cook: 'דביר עצמון שתיל', date: '16.7.26, חמישי' },
+          { cook: '', date: '17.7.26, שישי' },
+          { cook: '', date: '18.7.26, שבת' },
+          { cook: 'כרמל אגסי', date: '19.7.26, ראשון' },
+          { cook: '', date: '20.7.26, שני' },
+          { cook: 'קרן איילון שלח', date: '21.7.26, שלישי' },
+          { cook: '', date: '22.7.26, רביעי' },
+          { cook: 'מעיין עמידור', date: '23.7.26, חמישי' },
+          { cook: '', date: '24.7.26, שישי' },
+          { cook: '', date: '25.7.26, שבת' },
+          { cook: 'בר שלזינגר', date: '26.7.26, ראשון' },
+          { cook: '', date: '27.7.26, שני' },
+          { cook: 'נטע אגסי', date: '28.7.26, שלישי' },
+          { cook: '', date: '29.7.26, רביעי' },
+          { cook: '', date: '30.7.26, חמישי' },
+          { cook: '', date: '31.7.26, שישי' },
+          { cook: '', date: '1.8.26, שבת' },
+          { cook: '', date: '2.8.26, ראשון' },
+          { cook: 'נופית אלון', date: '3.8.26, שני' },
+          { cook: '', date: '4.8.26, שלישי' },
+          { cook: '', date: '5.8.26, רביעי' }
+        ]
+      },
+      sharon: {
+        name: 'שרון',
+        rows: [
+          { cook: 'נועה כהן', date: '12.07.2026, ראשון' },
+          { cook: 'מיכל לוי', date: '14.07.2026, שלישי' },
+          { cook: '', date: '16.07.2026, חמישי' },
+          { cook: 'יעל אברהם', date: '18.07.2026, שבת' },
+          { cook: 'דנה רוזן', date: '21.07.2026, שלישי' },
+          { cook: '', date: '23.07.2026, חמישי' },
+          { cook: 'תמר ביטון', date: '26.07.2026, ראשון' },
+          { cook: 'שירה מלכה', date: '28.07.2026, שלישי' }
+        ]
+      }
+    };
+
+    const screens = {
+      role: document.querySelector('#roleScreen'),
+      mother: document.querySelector('#motherScreen'),
+      list: document.querySelector('#listScreen')
+    };
+
+    const rowsEl = document.querySelector('#rows');
     const search = document.querySelector('#search');
-    const rows = [...document.querySelectorAll('#rows tr')];
     const visibleCount = document.querySelector('#visibleCount');
     const empty = document.querySelector('#empty');
+    const selectedMotherName = document.querySelector('#selectedMotherName');
+    const listTitle = document.querySelector('#listTitle');
+    const listBadge = document.querySelector('#listBadge');
+    const roleBadge = document.querySelector('#roleBadge');
+    const motherTitle = document.querySelector('#motherTitle');
+    const motherSubtitle = document.querySelector('#motherSubtitle');
+
+    let currentRole = '';
+    let currentMother = '';
+
+    function showScreen(name) {
+      Object.values(screens).forEach(screen => screen.classList.remove('active'));
+      screens[name].classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setRole(role) {
+      currentRole = role;
+      const isCook = role === 'cook';
+      roleBadge.textContent = isCook ? 'אני מבשלת' : 'אני יולדת';
+      motherTitle.textContent = isCook ? 'למי את מבשלת?' : 'מי היולדת?';
+      motherSubtitle.textContent = isCook
+        ? 'בחרי יולדת כדי לראות את השיבוצים והתאריכים הפנויים.'
+        : 'בחרי את שמך כדי לראות את רשימת המבשלות שלך.';
+      showScreen('mother');
+    }
+
+    function renderList(motherKey) {
+      currentMother = motherKey;
+      const mother = mothers[motherKey];
+      search.value = '';
+      selectedMotherName.textContent = mother.name;
+      listTitle.textContent = `רשימת המבשלות של ${mother.name}`;
+      listBadge.textContent = currentRole === 'cook' ? 'בחירת תאריך לבישול' : 'הרשימה שלי';
+
+      rowsEl.innerHTML = mother.rows.map(row => {
+        const cook = row.cook.trim();
+        const cookHtml = cook ? cook : '<span class="open-slot">פנוי לשיבוץ</span>';
+        return `<tr data-search="${mother.name} ${cook || 'פנוי'} ${row.date}">
+          <td class="name">${cookHtml}</td>
+          <td class="date">${row.date}</td>
+        </tr>`;
+      }).join('');
+
+      filterRows();
+      showScreen('list');
+    }
 
     function filterRows() {
       const q = search.value.trim().toLowerCase();
+      const rows = [...rowsEl.querySelectorAll('tr')];
       let count = 0;
 
       rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
+        const text = row.dataset.search.toLowerCase();
         const show = !q || text.includes(q);
         row.style.display = show ? '' : 'none';
         if (show) count += 1;
@@ -286,6 +477,17 @@
       empty.style.display = count === 0 ? 'block' : 'none';
     }
 
+    document.querySelectorAll('[data-role]').forEach(button => {
+      button.addEventListener('click', () => setRole(button.dataset.role));
+    });
+
+    document.querySelectorAll('[data-mother]').forEach(button => {
+      button.addEventListener('click', () => renderList(button.dataset.mother));
+    });
+
+    document.querySelector('#backToRoles').addEventListener('click', () => showScreen('role'));
+    document.querySelector('#backToMothers').addEventListener('click', () => showScreen('mother'));
+    document.querySelector('#backHome').addEventListener('click', () => showScreen('role'));
     search.addEventListener('input', filterRows);
   </script>
 </body>
