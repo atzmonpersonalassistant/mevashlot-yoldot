@@ -650,7 +650,7 @@
       currentMother = motherKey;
       const mother = mothers[motherKey];
       const includeOpenSlots = currentRole === 'companion';
-      const rows = includeOpenSlots ? mother.rows : mother.rows.filter(row => normalize(row.cook));
+      const rows = includeOpenSlots ? mother.rows.filter(row => normalize(row.cook) || !isPastDate(row.date)) : mother.rows.filter(row => normalize(row.cook));
 
       listSearch.value = '';
       selectedMotherName.textContent = mother.name;
