@@ -1077,8 +1077,7 @@
       currentMother = motherKey;
       if (!options.keepSearch) activeSignupKey = '';
       const mother = mothers[motherKey];
-      const includeOpenSlots = currentRole === 'companion';
-      const rows = includeOpenSlots ? mother.rows.filter(row => normalize(row.cook) || !isPastDate(row.date)) : mother.rows.filter(row => normalize(row.cook));
+      const rows = mother.rows.filter(row => normalize(row.cook));
 
       if (!options.keepSearch) listSearch.value = '';
       selectedMotherName.textContent = mother.name;
