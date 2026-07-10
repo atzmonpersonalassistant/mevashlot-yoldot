@@ -794,7 +794,7 @@
 
     function renderMotherButtons() {
       const buttons = Object.entries(mothers)
-        .filter(([, mother]) => mother.rows.length)
+        .filter(([, mother]) => mother.rows.some(row => isFutureDate(row.date)))
         .sort((a, b) => a[1].name.localeCompare(b[1].name, 'he'))
         .map(([key, mother]) => `<button type="button" data-mother="${escapeHtml(key)}">${escapeHtml(mother.name)}</button>`)
         .join('');
@@ -881,12 +881,12 @@
 
     function isPastDate(value) {
       const date = parseLocalDate(value);
-      return date ? date < todayStart() : false;
+      return date ? date <= todayStart() : false;
     }
 
-    function isTodayOrFuture(value) {
+    function isFutureDate(value) {
       const date = parseLocalDate(value);
-      return date ? date >= todayStart() : true;
+      return date ? date > todayStart() : false;
     }
 
     function pastNote(value) {
@@ -1029,13 +1029,13 @@
 
       return Object.values(mothers).flatMap(mother =>
         mother.rows
-          .filter(row => row.cook && normalize(row.cook).includes(q) && isTodayOrFuture(row.date))
+          .filter(row => row.cook && normalize(row.cook).includes(q) && isFutureDate(row.date))
           .map(row => ({ mother: mother.name, cook: row.cook, date: row.date, day: row.day, isPast: isPastDate(row.date) }))
       );
     }
 
     function getOpenSlotsForMother(mother) {
-      return mother.rows.filter(row => !normalize(row.cook) && isTodayOrFuture(row.date));
+      return mother.rows.filter(row => !normalize(row.cook) && isFutureDate(row.date));
     }
 
     function renderCookSearch() {
@@ -1104,7 +1104,7 @@
       currentMother = motherKey;
       if (!options.keepSearch) activeSignupKey = '';
       const mother = mothers[motherKey];
-      const rows = mother.rows.filter(row => normalize(row.cook));
+      const rows = mother.rows.filter(row => isFutureDate(row.date) && (currentRole === 'companion' || normalize(row.cook)));
 
       if (!options.keepSearch) listSearch.value = '';
       selectedMotherName.textContent = mother.name;
