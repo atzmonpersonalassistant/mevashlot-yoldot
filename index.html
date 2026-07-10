@@ -584,8 +584,7 @@
 
       <div class="nav">
         <button class="back" type="button" data-go="role">חזרה</button>
-        <button type="button" data-mother="maya">מיה</button>
-        <button type="button" data-mother="sharon">שרון</button>
+        <div id="motherButtons"></div>
       </div>
     </section>
 
@@ -626,10 +625,23 @@
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/14ZmelV6_zQOY_7K8E4QLKzhYgWiPdx_q93MHK8zr2u4/gviz/tq?tqx=out:csv&sheet=%D7%91%D7%99%D7%A9%D7%95%D7%9C%20%D7%9C%D7%9E%D7%99%D7%94%20%D7%95%D7%A6%D7%95%D7%A3';
     const SIGNUP_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyEjOy9vbS_UmEI96w5lFG5j98qRzOjVc_zYqpQrHJ0L4k-EzDtbW-XiV4BtOj1Ui8ZoA/exec';
 
-    const mothers = {
-      maya: { name: 'מיה', rows: [] },
-      sharon: { name: 'שרון', rows: [] }
-    };
+    const mothers = {};
+    const motherButtons = document.querySelector('#motherButtons');
+
+    function keyForMotherName(name) {
+      return normalize(name).replace(/\s+/g, '-');
+    }
+
+    function ensureMother(name) {
+      const cleanName = (name || '').trim();
+      if (!cleanName) return '';
+      const key = keyForMotherName(cleanName);
+      if (!mothers[key]) mothers[key] = { name: cleanName, rows: [] };
+      return key;
+    }
+
+    ensureMother('מיה');
+    ensureMother('שרון');
 
     const fallbackMayaRows = [
       { cook: 'מירב טל', date: '5.7.26', day: 'ראשון' },
@@ -750,8 +762,16 @@
     }
 
     function motherKeyFromName(name) {
-      const normalized = normalize(name);
-      return Object.keys(mothers).find(key => normalize(mothers[key].name) === normalized) || '';
+      return ensureMother(name);
+    }
+
+    function renderMotherButtons() {
+      const buttons = Object.entries(mothers)
+        .filter(([, mother]) => mother.rows.length)
+        .sort((a, b) => a[1].name.localeCompare(b[1].name, 'he'))
+        .map(([key, mother]) => `<button type="button" data-mother="${escapeHtml(key)}">${escapeHtml(mother.name)}</button>`)
+        .join('');
+      motherButtons.innerHTML = buttons || '<span class="hint">אין עדיין יולדות ברשימה.</span>';
     }
 
     function rowsFromSheetCsv(csvText) {
@@ -784,8 +804,11 @@
     let sheetLoadPromise = null;
 
     async function loadSheetData(options = {}) {
-      mothers.maya.rows = mothers.maya.rows.length ? mothers.maya.rows : fallbackMayaRows;
-      mothers.sharon.rows = mothers.sharon.rows.length ? mothers.sharon.rows : fallbackSharonRows;
+      const mayaKey = ensureMother('מיה');
+      const sharonKey = ensureMother('שרון');
+      mothers[mayaKey].rows = mothers[mayaKey].rows.length ? mothers[mayaKey].rows : fallbackMayaRows;
+      mothers[sharonKey].rows = mothers[sharonKey].rows.length ? mothers[sharonKey].rows : fallbackSharonRows;
+      renderMotherButtons();
       if (options.force) sheetLoadPromise = null;
       if (sheetLoadPromise) return sheetLoadPromise;
 
@@ -799,8 +822,11 @@
           Object.entries(rowsByMother).forEach(([key, rows]) => {
             if (rows.length) mothers[key].rows = rows;
           });
-          if (!mothers.maya.rows.length) mothers.maya.rows = fallbackMayaRows;
-          if (!mothers.sharon.rows.length) mothers.sharon.rows = fallbackSharonRows;
+          const mayaKey = ensureMother('מיה');
+          const sharonKey = ensureMother('שרון');
+          if (!mothers[mayaKey].rows.length) mothers[mayaKey].rows = fallbackMayaRows;
+          if (!mothers[sharonKey].rows.length) mothers[sharonKey].rows = fallbackSharonRows;
+          renderMotherButtons();
           refreshCurrentView();
         })
         .catch(error => {
@@ -1089,6 +1115,7 @@
       listEmpty.style.display = count === 0 ? 'block' : 'none';
     }
 
+    renderMotherButtons();
     loadSheetData();
 
     document.querySelectorAll('[data-role]').forEach(button => {
@@ -1098,11 +1125,11 @@
       });
     });
 
-    document.querySelectorAll('[data-mother]').forEach(button => {
-      button.addEventListener('click', () => {
-        renderMotherList(button.dataset.mother);
-        loadSheetData();
-      });
+    document.addEventListener('click', event => {
+      const button = event.target.closest('[data-mother]');
+      if (!button) return;
+      renderMotherList(button.dataset.mother);
+      loadSheetData();
     });
 
     document.querySelectorAll('[data-go="role"]').forEach(button => {
