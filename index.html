@@ -346,7 +346,6 @@
           <span class="choice-icon">🤱</span>
           <span>
             <h2>אני יולדת</h2>
-            <p>בחרי את שמך וראי רק את השיבוצים הקיימים, בלי שורות פנויות.</p>
           </span>
         </button>
       </div>
@@ -375,6 +374,7 @@
               <th>יולדת</th>
               <th>שם המבשלת</th>
               <th>תאריך</th>
+              <th>יום בשבוע</th>
             </tr>
           </thead>
           <tbody id="cookRows"></tbody>
@@ -421,6 +421,7 @@
             <tr>
               <th>שם המבשלת</th>
               <th>תאריך</th>
+              <th>יום בשבוע</th>
             </tr>
           </thead>
           <tbody id="listRows"></tbody>
@@ -435,51 +436,51 @@
       maya: {
         name: 'מיה',
         rows: [
-          { cook: 'מירב טל', date: '5.7.26, ראשון' },
-          { cook: '', date: '6.7.26, שני' },
-          { cook: 'גלי גבים', date: '7.7.26, שלישי' },
-          { cook: '', date: '8.7.26, רביעי' },
-          { cook: 'אלין', date: '9.7.26, חמישי' },
-          { cook: '', date: '10.7.26, שישי' },
-          { cook: '', date: '11.7.26, שבת' },
-          { cook: 'סמדר אגסי', date: '12.7.26, ראשון' },
-          { cook: '', date: '13.7.26, שני' },
-          { cook: '', date: '14.7.26, שלישי' },
-          { cook: '', date: '15.7.26, רביעי' },
-          { cook: 'דביר עצמון שתיל', date: '16.7.26, חמישי' },
-          { cook: '', date: '17.7.26, שישי' },
-          { cook: '', date: '18.7.26, שבת' },
-          { cook: 'כרמל אגסי', date: '19.7.26, ראשון' },
-          { cook: '', date: '20.7.26, שני' },
-          { cook: 'קרן איילון שלח', date: '21.7.26, שלישי' },
-          { cook: '', date: '22.7.26, רביעי' },
-          { cook: 'מעיין עמידור', date: '23.7.26, חמישי' },
-          { cook: '', date: '24.7.26, שישי' },
-          { cook: '', date: '25.7.26, שבת' },
-          { cook: 'בר שלזינגר', date: '26.7.26, ראשון' },
-          { cook: '', date: '27.7.26, שני' },
-          { cook: 'נטע אגסי', date: '28.7.26, שלישי' },
-          { cook: '', date: '29.7.26, רביעי' },
-          { cook: '', date: '30.7.26, חמישי' },
-          { cook: '', date: '31.7.26, שישי' },
-          { cook: '', date: '1.8.26, שבת' },
-          { cook: '', date: '2.8.26, ראשון' },
-          { cook: 'נופית אלון', date: '3.8.26, שני' },
-          { cook: '', date: '4.8.26, שלישי' },
-          { cook: '', date: '5.8.26, רביעי' }
+          { cook: 'מירב טל', date: '5.7.26', day: 'ראשון' },
+          { cook: '', date: '6.7.26', day: 'שני' },
+          { cook: 'גלי גבים', date: '7.7.26', day: 'שלישי' },
+          { cook: '', date: '8.7.26', day: 'רביעי' },
+          { cook: 'אלין', date: '9.7.26', day: 'חמישי' },
+          { cook: '', date: '10.7.26', day: 'שישי' },
+          { cook: '', date: '11.7.26', day: 'שבת' },
+          { cook: 'סמדר אגסי', date: '12.7.26', day: 'ראשון' },
+          { cook: '', date: '13.7.26', day: 'שני' },
+          { cook: '', date: '14.7.26', day: 'שלישי' },
+          { cook: '', date: '15.7.26', day: 'רביעי' },
+          { cook: 'דביר עצמון שתיל', date: '16.7.26', day: 'חמישי' },
+          { cook: '', date: '17.7.26', day: 'שישי' },
+          { cook: '', date: '18.7.26', day: 'שבת' },
+          { cook: 'כרמל אגסי', date: '19.7.26', day: 'ראשון' },
+          { cook: '', date: '20.7.26', day: 'שני' },
+          { cook: 'קרן איילון שלח', date: '21.7.26', day: 'שלישי' },
+          { cook: '', date: '22.7.26', day: 'רביעי' },
+          { cook: 'מעיין עמידור', date: '23.7.26', day: 'חמישי' },
+          { cook: '', date: '24.7.26', day: 'שישי' },
+          { cook: '', date: '25.7.26', day: 'שבת' },
+          { cook: 'בר שלזינגר', date: '26.7.26', day: 'ראשון' },
+          { cook: '', date: '27.7.26', day: 'שני' },
+          { cook: 'נטע אגסי', date: '28.7.26', day: 'שלישי' },
+          { cook: '', date: '29.7.26', day: 'רביעי' },
+          { cook: '', date: '30.7.26', day: 'חמישי' },
+          { cook: '', date: '31.7.26', day: 'שישי' },
+          { cook: '', date: '1.8.26', day: 'שבת' },
+          { cook: '', date: '2.8.26', day: 'ראשון' },
+          { cook: 'נופית אלון', date: '3.8.26', day: 'שני' },
+          { cook: '', date: '4.8.26', day: 'שלישי' },
+          { cook: '', date: '5.8.26', day: 'רביעי' }
         ]
       },
       sharon: {
         name: 'שרון',
         rows: [
-          { cook: 'נועה כהן', date: '12.07.2026, ראשון' },
-          { cook: 'מיכל לוי', date: '14.07.2026, שלישי' },
-          { cook: '', date: '16.07.2026, חמישי' },
-          { cook: 'יעל אברהם', date: '18.07.2026, שבת' },
-          { cook: 'סמדר אגסי', date: '21.07.2026, שלישי' },
-          { cook: '', date: '23.07.2026, חמישי' },
-          { cook: 'תמר ביטון', date: '26.07.2026, ראשון' },
-          { cook: 'מירב טל', date: '28.07.2026, שלישי' }
+          { cook: 'נועה כהן', date: '12.07.2026', day: 'ראשון' },
+          { cook: 'מיכל לוי', date: '14.07.2026', day: 'שלישי' },
+          { cook: '', date: '16.07.2026', day: 'חמישי' },
+          { cook: 'יעל אברהם', date: '18.07.2026', day: 'שבת' },
+          { cook: 'סמדר אגסי', date: '21.07.2026', day: 'שלישי' },
+          { cook: '', date: '23.07.2026', day: 'חמישי' },
+          { cook: 'תמר ביטון', date: '26.07.2026', day: 'ראשון' },
+          { cook: 'מירב טל', date: '28.07.2026', day: 'שלישי' }
         ]
       }
     };
@@ -536,7 +537,7 @@
       selectMotherBadge.textContent = isMother ? 'אני יולדת' : 'אני מלווה';
       selectMotherTitle.textContent = isMother ? 'מי היולדת?' : 'לאיזו יולדת?';
       selectMotherSubtitle.textContent = isMother
-        ? 'בחרי את שמך כדי לראות את השיבוצים הקיימים בלבד.'
+        ? ''
         : 'בחרי יולדת כדי לראות את כל השיבוצים והתאריכים הפנויים.';
       showScreen('selectMother');
     }
@@ -548,7 +549,7 @@
       return Object.values(mothers).flatMap(mother =>
         mother.rows
           .filter(row => row.cook && normalize(row.cook).includes(q))
-          .map(row => ({ mother: mother.name, cook: row.cook, date: row.date }))
+          .map(row => ({ mother: mother.name, cook: row.cook, date: row.date, day: row.day }))
       );
     }
 
@@ -566,6 +567,7 @@
           <td data-label="יולדת"><span class="pill assignment">${escapeHtml(item.mother)}</span></td>
           <td data-label="שם המבשלת" class="name">${escapeHtml(item.cook)}</td>
           <td data-label="תאריך" class="date">${escapeHtml(item.date)}</td>
+          <td data-label="יום בשבוע">${escapeHtml(item.day)}</td>
         </tr>
       `).join('');
 
@@ -584,7 +586,7 @@
         if (assignedMotherNames.has(mother.name)) return '';
         const openSlots = getOpenSlotsForMother(mother);
         const slotsHtml = openSlots.length
-          ? openSlots.map(slot => `<span class="pill open-slot">${escapeHtml(slot.date)}</span>`).join('')
+          ? openSlots.map(slot => `<span class="pill open-slot">${escapeHtml(slot.date)} (${escapeHtml(slot.day)})</span>`).join('')
           : '<span class="hint">אין כרגע תאריכים פנויים.</span>';
 
         return `<div class="suggestion-block">
@@ -608,9 +610,10 @@
       listRows.innerHTML = rows.map(row => {
         const cook = normalize(row.cook);
         const cookHtml = cook ? escapeHtml(row.cook) : '<span class="pill open-slot">פנוי לשיבוץ</span>';
-        return `<tr data-search="${escapeHtml(`${mother.name} ${row.cook || 'פנוי'} ${row.date}`)}">
+        return `<tr data-search="${escapeHtml(`${mother.name} ${row.cook || 'פנוי'} ${row.date} ${row.day}`)}">
           <td data-label="שם המבשלת" class="name">${cookHtml}</td>
           <td data-label="תאריך" class="date">${escapeHtml(row.date)}</td>
+          <td data-label="יום בשבוע">${escapeHtml(row.day)}</td>
         </tr>`;
       }).join('');
 
