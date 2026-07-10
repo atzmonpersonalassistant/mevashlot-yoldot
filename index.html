@@ -365,8 +365,6 @@
     <section id="roleScreen" class="screen active" aria-label="בחירת תפקיד">
       <header>
         <div class="badge">רשימת מבשלות ליולדות</div>
-        <h1>מה תרצי לעשות?</h1>
-        <p class="subtitle">בחרי את המסלול המתאים. אפשר לראות שיבוצים, לבדוק תאריכים פנויים, או לצפות ברשימת יולדת.</p>
       </header>
 
       <div class="choice-grid">
@@ -573,8 +571,10 @@
           row.push(cell);
           cell = '';
         } else if ((ch === '
-' || ch === '') && !inQuotes) {
-          if (ch === '' && next === '
+' || ch === '
+') && !inQuotes) {
+          if (ch === '
+' && next === '
 ') i++;
           row.push(cell);
           if (row.some(value => value.trim())) rows.push(row);
@@ -602,17 +602,30 @@
         .filter(row => parseLocalDate(row.date) && parseLocalDate(row.date) <= parseLocalDate('5.8.26'));
     }
 
+    let sheetLoadPromise = null;
+
     async function loadSheetData() {
-      mothers.maya.rows = fallbackMayaRows;
-      try {
-        const response = await fetch(`${SHEET_CSV_URL}&cacheBust=${Date.now()}`, { cache: 'no-store' });
-        if (!response.ok) throw new Error(`Sheet request failed: ${response.status}`);
-        const text = await response.text();
-        const rows = rowsFromSheetCsv(text);
-        if (rows.length) mothers.maya.rows = rows;
-      } catch (error) {
-        console.warn('Using fallback sheet data', error);
-      }
+      mothers.maya.rows = mothers.maya.rows.length ? mothers.maya.rows : fallbackMayaRows;
+      if (sheetLoadPromise) return sheetLoadPromise;
+
+      sheetLoadPromise = fetch(`${SHEET_CSV_URL}&cacheBust=${Date.now()}`, { cache: 'no-store' })
+        .then(response => {
+          if (!response.ok) throw new Error(`Sheet request failed: ${response.status}`);
+          return response.text();
+        })
+        .then(text => {
+          const rows = rowsFromSheetCsv(text);
+          if (rows.length) mothers.maya.rows = rows;
+          refreshCurrentView();
+        })
+        .catch(error => {
+          console.warn('Using fallback sheet data', error);
+        })
+        .finally(() => {
+          sheetLoadPromise = null;
+        });
+
+      return sheetLoadPromise;
     }
 
     function parseLocalDate(value) {
@@ -642,10 +655,19 @@
       return isPastDate(value) ? '<span class="past-note">חלף</span>' : '';
     }
 
-    function showScreen(name) {
+    function refreshCurrentView() {
+      if (currentRole === 'cook' && screens.cook.classList.contains('active')) {
+        renderCookSearch();
+      }
+      if ((currentRole === 'companion' || currentRole === 'mother') && currentMother && screens.list.classList.contains('active')) {
+        renderMotherList(currentMother, { keepSearch: true, skipScroll: true });
+      }
+    }
+
+    function showScreen(name, options = {}) {
       Object.values(screens).forEach(screen => screen.classList.remove('active'));
       screens[name].classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (!options.skipScroll) window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function setRole(role) {
@@ -722,13 +744,13 @@
       }).join('');
     }
 
-    function renderMotherList(motherKey) {
+    function renderMotherList(motherKey, options = {}) {
       currentMother = motherKey;
       const mother = mothers[motherKey];
       const includeOpenSlots = currentRole === 'companion';
       const rows = includeOpenSlots ? mother.rows.filter(row => normalize(row.cook) || !isPastDate(row.date)) : mother.rows.filter(row => normalize(row.cook));
 
-      listSearch.value = '';
+      if (!options.keepSearch) listSearch.value = '';
       selectedMotherName.textContent = mother.name;
       listTitle.textContent = `רשימת המבשלות של ${mother.name}`;
       listBadge.textContent = currentRole === 'mother' ? 'אני יולדת' : 'אני מלווה';
@@ -744,7 +766,7 @@
       }).join('');
 
       filterListRows();
-      showScreen('list');
+      showScreen('list', { skipScroll: options.skipScroll });
     }
 
     function filterListRows() {
@@ -766,16 +788,16 @@
     loadSheetData();
 
     document.querySelectorAll('[data-role]').forEach(button => {
-      button.addEventListener('click', async () => {
-        await loadSheetData();
+      button.addEventListener('click', () => {
         setRole(button.dataset.role);
+        loadSheetData();
       });
     });
 
     document.querySelectorAll('[data-mother]').forEach(button => {
-      button.addEventListener('click', async () => {
-        await loadSheetData();
+      button.addEventListener('click', () => {
         renderMotherList(button.dataset.mother);
+        loadSheetData();
       });
     });
 
