@@ -585,6 +585,7 @@
       <div class="nav">
         <button class="back" type="button" data-go="role">חזרה</button>
         <button type="button" data-mother="maya">מיה</button>
+        <button type="button" data-mother="sharon">שרון</button>
       </div>
     </section>
 
@@ -626,10 +627,8 @@
     const SIGNUP_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyEjOy9vbS_UmEI96w5lFG5j98qRzOjVc_zYqpQrHJ0L4k-EzDtbW-XiV4BtOj1Ui8ZoA/exec';
 
     const mothers = {
-      maya: {
-        name: 'מיה',
-        rows: []
-      }
+      maya: { name: 'מיה', rows: [] },
+      sharon: { name: 'שרון', rows: [] }
     };
 
     const fallbackMayaRows = [
@@ -665,6 +664,17 @@
       { cook: 'נופית אלון', date: '3.8.26', day: 'שני' },
       { cook: '', date: '4.8.26', day: 'שלישי' },
       { cook: 'ירדן עמידור', date: '5.8.26', day: 'רביעי' }
+    ];
+
+
+    const fallbackSharonRows = [
+      { cook: 'סמדר אגסי', date: '12.7.26', day: 'ראשון' },
+      { cook: 'ירדן עמידור', date: '14.7.26', day: 'שלישי' },
+      { cook: 'דביר שתיל', date: '16.7.26', day: 'חמישי' },
+      { cook: 'מעין צור', date: '17.7.26', day: 'שישי' },
+      { cook: 'שירי מן', date: '19.7.26', day: 'ראשון' },
+      { cook: 'גלי גבים', date: '21.7.26', day: 'שלישי' },
+      { cook: 'קוקה', date: '23.7.26', day: 'חמישי' }
     ];
 
 
@@ -739,23 +749,43 @@
       return rows;
     }
 
+    function motherKeyFromName(name) {
+      const normalized = normalize(name);
+      return Object.keys(mothers).find(key => normalize(mothers[key].name) === normalized) || '';
+    }
+
     function rowsFromSheetCsv(csvText) {
-      return parseCsv(csvText)
-        .slice(1)
-        .map((row, index) => ({
-          date: (row[0] || '').trim(),
-          day: (row[1] || '').trim(),
-          cook: (row[2] || '').trim(),
+      const csvRows = parseCsv(csvText);
+      const headers = (csvRows[0] || []).map(normalize);
+      const motherIndex = headers.indexOf('שם היולדת');
+      const dateIndex = headers.indexOf('תאריך');
+      const dayIndex = headers.indexOf('יום בשבוע');
+      const cookIndex = headers.indexOf('שם המבשלת');
+
+      const byMother = Object.fromEntries(Object.keys(mothers).map(key => [key, []]));
+      csvRows.slice(1).forEach((row, index) => {
+        const motherName = (row[motherIndex] || '').trim();
+        const motherKey = motherKeyFromName(motherName);
+        if (!motherKey) return;
+
+        const item = {
+          date: (row[dateIndex] || '').trim(),
+          day: (row[dayIndex] || '').trim(),
+          cook: (row[cookIndex] || '').trim(),
           sheetRow: index + 2
-        }))
-        .filter(row => row.date && row.day)
-        .filter(row => parseLocalDate(row.date) && parseLocalDate(row.date) <= parseLocalDate('5.8.26'));
+        };
+        if (!item.date || !item.day) return;
+        if (!parseLocalDate(item.date) || parseLocalDate(item.date) > parseLocalDate('5.8.26')) return;
+        byMother[motherKey].push(item);
+      });
+      return byMother;
     }
 
     let sheetLoadPromise = null;
 
     async function loadSheetData(options = {}) {
       mothers.maya.rows = mothers.maya.rows.length ? mothers.maya.rows : fallbackMayaRows;
+      mothers.sharon.rows = mothers.sharon.rows.length ? mothers.sharon.rows : fallbackSharonRows;
       if (options.force) sheetLoadPromise = null;
       if (sheetLoadPromise) return sheetLoadPromise;
 
@@ -765,8 +795,12 @@
           return response.text();
         })
         .then(text => {
-          const rows = rowsFromSheetCsv(text);
-          if (rows.length) mothers.maya.rows = rows;
+          const rowsByMother = rowsFromSheetCsv(text);
+          Object.entries(rowsByMother).forEach(([key, rows]) => {
+            if (rows.length) mothers[key].rows = rows;
+          });
+          if (!mothers.maya.rows.length) mothers.maya.rows = fallbackMayaRows;
+          if (!mothers.sharon.rows.length) mothers.sharon.rows = fallbackSharonRows;
           refreshCurrentView();
         })
         .catch(error => {
