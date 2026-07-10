@@ -10,13 +10,15 @@
       --bg: #fff7ed;
       --text: #2f241f;
       --muted: #7c6a5f;
-      --card: rgba(255,255,255,0.82);
+      --card: rgba(255,255,255,0.84);
       --border: #f0d8c3;
       --accent: #d97706;
       --accent-dark: #9a5510;
       --accent-soft: #fed7aa;
       --green: #15803d;
       --green-soft: #dcfce7;
+      --blue: #1d4ed8;
+      --blue-soft: #dbeafe;
       --shadow: 0 20px 60px rgba(92, 48, 18, 0.12);
       --radius: 24px;
     }
@@ -35,7 +37,7 @@
     }
 
     .page {
-      width: min(980px, calc(100% - 32px));
+      width: min(1040px, calc(100% - 32px));
       margin: 0 auto;
       padding: 44px 0 56px;
     }
@@ -51,7 +53,7 @@
       border: 1px solid var(--border);
       background: rgba(255,255,255,0.62);
       color: var(--accent);
-      font-weight: 800;
+      font-weight: 850;
       padding: 8px 14px;
       border-radius: 999px;
       font-size: 14px;
@@ -64,12 +66,14 @@
       letter-spacing: -0.04em;
     }
 
+    h2 { margin: 0; }
+
     .subtitle {
       margin: 0;
       color: var(--muted);
       font-size: 18px;
       line-height: 1.7;
-      max-width: 720px;
+      max-width: 760px;
     }
 
     .screen { display: none; }
@@ -77,7 +81,7 @@
 
     .choice-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 18px;
       margin-top: 26px;
     }
@@ -118,7 +122,7 @@
 
     .choice h2 {
       margin: 0 0 8px;
-      font-size: 28px;
+      font-size: 26px;
     }
 
     .choice p {
@@ -134,6 +138,7 @@
       box-shadow: var(--shadow);
       backdrop-filter: blur(16px);
       overflow: hidden;
+      margin-top: 16px;
     }
 
     .nav {
@@ -143,19 +148,19 @@
       margin: 18px 0 22px;
     }
 
-    button, .button {
+    button {
       border: 1px solid var(--border);
       border-radius: 999px;
       background: #fff;
       color: var(--text);
       padding: 11px 16px;
       font: inherit;
-      font-weight: 800;
+      font-weight: 850;
       cursor: pointer;
       transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
     }
 
-    button:hover, .button:hover { border-color: var(--accent); }
+    button:hover { border-color: var(--accent); }
     button.active {
       background: var(--accent);
       border-color: var(--accent);
@@ -169,13 +174,15 @@
 
     .toolbar {
       display: grid;
-      grid-template-columns: 1fr minmax(220px, 340px);
+      grid-template-columns: 1fr minmax(220px, 360px);
       gap: 16px;
       align-items: center;
       padding: 18px;
       border-bottom: 1px solid var(--border);
       background: rgba(255,255,255,0.48);
     }
+
+    .toolbar.single { grid-template-columns: 1fr; }
 
     .count {
       color: var(--muted);
@@ -185,18 +192,18 @@
 
     .count strong { color: var(--text); }
 
-    .search {
+    .search, .input {
       width: 100%;
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 12px 14px;
+      padding: 13px 14px;
       background: #fff;
       color: var(--text);
       font-size: 16px;
       outline: none;
     }
 
-    .search:focus {
+    .search:focus, .input:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.12);
     }
@@ -210,12 +217,13 @@
       text-align: right;
       padding: 18px 20px;
       border-bottom: 1px solid var(--border);
+      vertical-align: top;
     }
 
     th {
       color: var(--muted);
       font-size: 14px;
-      font-weight: 900;
+      font-weight: 950;
       background: rgba(255,255,255,0.44);
     }
 
@@ -225,18 +233,19 @@
     .name { font-weight: 850; }
     .date { color: var(--muted); white-space: nowrap; }
 
-    .open-slot {
+    .pill {
       width: fit-content;
       display: inline-flex;
       align-items: center;
       gap: 7px;
       padding: 6px 10px;
       border-radius: 999px;
-      background: var(--green-soft);
-      color: var(--green);
       font-size: 14px;
       font-weight: 850;
     }
+
+    .open-slot { background: var(--green-soft); color: var(--green); }
+    .assignment { background: var(--blue-soft); color: var(--blue); }
 
     .empty {
       display: none;
@@ -244,9 +253,43 @@
       color: var(--muted);
       text-align: center;
       border-top: 1px solid var(--border);
+      line-height: 1.6;
     }
 
-    @media (max-width: 720px) {
+    .suggestions {
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+      border-top: 1px solid var(--border);
+      background: rgba(255,255,255,0.36);
+    }
+
+    .suggestion-block {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(255,255,255,0.72);
+    }
+
+    .suggestion-block h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .suggestion-list {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 8px 0 0;
+    }
+
+    @media (max-width: 820px) {
       .page { padding-top: 30px; }
       .choice-grid { grid-template-columns: 1fr; }
       .toolbar { grid-template-columns: 1fr; }
@@ -262,16 +305,14 @@
       tr:last-child { border-bottom: none; }
       td { border: none; padding: 4px 0; }
 
-      td::before {
+      td[data-label]::before {
+        content: attr(data-label);
         display: block;
         color: var(--muted);
         font-size: 13px;
-        font-weight: 900;
+        font-weight: 950;
         margin-bottom: 2px;
       }
-
-      td.name::before { content: "שם המבשלת"; }
-      td.date::before { content: "תאריך"; }
     }
   </style>
 </head>
@@ -281,7 +322,7 @@
       <header>
         <div class="badge">רשימת מבשלות ליולדות</div>
         <h1>מה תרצי לעשות?</h1>
-        <p class="subtitle">בחרי אם את מבשלת או יולדת, ומשם נציג את הרשימה הרלוונטית בצורה פשוטה ונוחה.</p>
+        <p class="subtitle">בחרי את המסלול המתאים. אפשר לראות שיבוצים, לבדוק תאריכים פנויים, או לצפות ברשימת יולדת.</p>
       </header>
 
       <div class="choice-grid">
@@ -289,7 +330,15 @@
           <span class="choice-icon">🍲</span>
           <span>
             <h2>אני מבשלת</h2>
-            <p>בחרי יולדת וראי מי כבר משובצת ומתי יש תאריכים פנויים.</p>
+            <p>הקלידי את שמך וראי לאילו יולדות את משובצת ובאילו תאריכים.</p>
+          </span>
+        </button>
+
+        <button class="choice" type="button" data-role="companion">
+          <span class="choice-icon">🧡</span>
+          <span>
+            <h2>אני מלווה</h2>
+            <p>בחרי יולדת וראי את כל השיבוצים כולל תאריכים פנויים.</p>
           </span>
         </button>
 
@@ -297,21 +346,53 @@
           <span class="choice-icon">🤱</span>
           <span>
             <h2>אני יולדת</h2>
-            <p>בחרי את שמך וראי את רשימת המבשלות והתאריכים שלך.</p>
+            <p>בחרי את שמך וראי רק את השיבוצים הקיימים, בלי שורות פנויות.</p>
           </span>
         </button>
       </div>
     </section>
 
-    <section id="motherScreen" class="screen" aria-label="בחירת יולדת">
+    <section id="cookScreen" class="screen" aria-label="חיפוש מבשלת">
       <header>
-        <div class="badge" id="roleBadge">בחירת יולדת</div>
-        <h1 id="motherTitle">לאיזו יולדת?</h1>
-        <p class="subtitle" id="motherSubtitle">בחרי יולדת כדי לראות את רשימת המבשלות והתאריכים.</p>
+        <div class="badge">אני מבשלת</div>
+        <h1>מה השם שלך?</h1>
+        <p class="subtitle">התחילי להקליד את שמך. התוצאות יתעדכנו תוך כדי הקלדה.</p>
       </header>
 
       <div class="nav">
-        <button class="back" type="button" id="backToRoles">חזרה</button>
+        <button class="back" type="button" data-go="role">חזרה</button>
+      </div>
+
+      <section class="panel">
+        <div class="toolbar single">
+          <input class="input" id="cookNameInput" type="search" placeholder="לדוגמה: סמדר, נטע, מירב…" aria-label="שם המבשלת" autocomplete="off" />
+          <p class="hint">אם את לא משובצת ליולדת מסוימת, יוצגו לך התאריכים הפנויים לאותה יולדת.</p>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>יולדת</th>
+              <th>שם המבשלת</th>
+              <th>תאריך</th>
+            </tr>
+          </thead>
+          <tbody id="cookRows"></tbody>
+        </table>
+        <div class="empty" id="cookEmpty">הקלידי שם כדי לראות שיבוצים.</div>
+        <div class="suggestions" id="cookSuggestions"></div>
+      </section>
+    </section>
+
+    <section id="selectMotherScreen" class="screen" aria-label="בחירת יולדת">
+      <header>
+        <div class="badge" id="selectMotherBadge">בחירת יולדת</div>
+        <h1 id="selectMotherTitle">לאיזו יולדת?</h1>
+        <p class="subtitle" id="selectMotherSubtitle">בחרי יולדת כדי לראות את הרשימה הרלוונטית.</p>
+      </header>
+
+      <div class="nav">
+        <button class="back" type="button" data-go="role">חזרה</button>
         <button type="button" data-mother="maya">מיה</button>
         <button type="button" data-mother="sharon">שרון</button>
       </div>
@@ -326,13 +407,13 @@
 
       <div class="nav">
         <button class="back" type="button" id="backToMothers">בחירת יולדת אחרת</button>
-        <button class="back" type="button" id="backHome">התחלה</button>
+        <button class="back" type="button" data-go="role">התחלה</button>
       </div>
 
       <section class="panel">
         <div class="toolbar">
           <div class="count"><strong id="visibleCount">0</strong> שורות מוצגות עבור <strong id="selectedMotherName"></strong></div>
-          <input class="search" id="search" type="search" placeholder="חיפוש לפי שם, יולדת או תאריך…" aria-label="חיפוש" />
+          <input class="search" id="listSearch" type="search" placeholder="חיפוש לפי שם, יולדת או תאריך…" aria-label="חיפוש" />
         </div>
 
         <table>
@@ -342,9 +423,9 @@
               <th>תאריך</th>
             </tr>
           </thead>
-          <tbody id="rows"></tbody>
+          <tbody id="listRows"></tbody>
         </table>
-        <div class="empty" id="empty">לא נמצאו תוצאות לחיפוש הזה.</div>
+        <div class="empty" id="listEmpty">לא נמצאו תוצאות לחיפוש הזה.</div>
       </section>
     </section>
   </main>
@@ -395,33 +476,44 @@
           { cook: 'מיכל לוי', date: '14.07.2026, שלישי' },
           { cook: '', date: '16.07.2026, חמישי' },
           { cook: 'יעל אברהם', date: '18.07.2026, שבת' },
-          { cook: 'דנה רוזן', date: '21.07.2026, שלישי' },
+          { cook: 'סמדר אגסי', date: '21.07.2026, שלישי' },
           { cook: '', date: '23.07.2026, חמישי' },
           { cook: 'תמר ביטון', date: '26.07.2026, ראשון' },
-          { cook: 'שירה מלכה', date: '28.07.2026, שלישי' }
+          { cook: 'מירב טל', date: '28.07.2026, שלישי' }
         ]
       }
     };
 
     const screens = {
       role: document.querySelector('#roleScreen'),
-      mother: document.querySelector('#motherScreen'),
+      cook: document.querySelector('#cookScreen'),
+      selectMother: document.querySelector('#selectMotherScreen'),
       list: document.querySelector('#listScreen')
     };
 
-    const rowsEl = document.querySelector('#rows');
-    const search = document.querySelector('#search');
+    const cookInput = document.querySelector('#cookNameInput');
+    const cookRows = document.querySelector('#cookRows');
+    const cookEmpty = document.querySelector('#cookEmpty');
+    const cookSuggestions = document.querySelector('#cookSuggestions');
+
+    const listRows = document.querySelector('#listRows');
+    const listSearch = document.querySelector('#listSearch');
     const visibleCount = document.querySelector('#visibleCount');
-    const empty = document.querySelector('#empty');
+    const listEmpty = document.querySelector('#listEmpty');
     const selectedMotherName = document.querySelector('#selectedMotherName');
     const listTitle = document.querySelector('#listTitle');
     const listBadge = document.querySelector('#listBadge');
-    const roleBadge = document.querySelector('#roleBadge');
-    const motherTitle = document.querySelector('#motherTitle');
-    const motherSubtitle = document.querySelector('#motherSubtitle');
+    const selectMotherBadge = document.querySelector('#selectMotherBadge');
+    const selectMotherTitle = document.querySelector('#selectMotherTitle');
+    const selectMotherSubtitle = document.querySelector('#selectMotherSubtitle');
 
     let currentRole = '';
     let currentMother = '';
+
+    const normalize = value => (value || '').trim().toLowerCase();
+    const escapeHtml = value => String(value).replace(/[&<>'"]/g, ch => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+    }[ch]));
 
     function showScreen(name) {
       Object.values(screens).forEach(screen => screen.classList.remove('active'));
@@ -431,50 +523,115 @@
 
     function setRole(role) {
       currentRole = role;
-      const isCook = role === 'cook';
-      roleBadge.textContent = isCook ? 'אני מבשלת' : 'אני יולדת';
-      motherTitle.textContent = isCook ? 'למי את מבשלת?' : 'מי היולדת?';
-      motherSubtitle.textContent = isCook
-        ? 'בחרי יולדת כדי לראות את השיבוצים והתאריכים הפנויים.'
-        : 'בחרי את שמך כדי לראות את רשימת המבשלות שלך.';
-      showScreen('mother');
+
+      if (role === 'cook') {
+        cookInput.value = '';
+        renderCookSearch();
+        showScreen('cook');
+        setTimeout(() => cookInput.focus(), 120);
+        return;
+      }
+
+      const isMother = role === 'mother';
+      selectMotherBadge.textContent = isMother ? 'אני יולדת' : 'אני מלווה';
+      selectMotherTitle.textContent = isMother ? 'מי היולדת?' : 'לאיזו יולדת?';
+      selectMotherSubtitle.textContent = isMother
+        ? 'בחרי את שמך כדי לראות את השיבוצים הקיימים בלבד.'
+        : 'בחרי יולדת כדי לראות את כל השיבוצים והתאריכים הפנויים.';
+      showScreen('selectMother');
     }
 
-    function renderList(motherKey) {
+    function getAssignmentsForCook(query) {
+      const q = normalize(query);
+      if (!q) return [];
+
+      return Object.values(mothers).flatMap(mother =>
+        mother.rows
+          .filter(row => row.cook && normalize(row.cook).includes(q))
+          .map(row => ({ mother: mother.name, cook: row.cook, date: row.date }))
+      );
+    }
+
+    function getOpenSlotsForMother(mother) {
+      return mother.rows.filter(row => !normalize(row.cook));
+    }
+
+    function renderCookSearch() {
+      const query = cookInput.value;
+      const assignments = getAssignmentsForCook(query);
+      const hasQuery = normalize(query).length > 0;
+
+      cookRows.innerHTML = assignments.map(item => `
+        <tr>
+          <td data-label="יולדת"><span class="pill assignment">${escapeHtml(item.mother)}</span></td>
+          <td data-label="שם המבשלת" class="name">${escapeHtml(item.cook)}</td>
+          <td data-label="תאריך" class="date">${escapeHtml(item.date)}</td>
+        </tr>
+      `).join('');
+
+      cookEmpty.style.display = hasQuery && assignments.length === 0 ? 'block' : hasQuery ? 'none' : 'block';
+      cookEmpty.textContent = hasQuery
+        ? 'לא נמצאו שיבוצים לשם הזה. אפשר לבדוק את התאריכים הפנויים למטה.'
+        : 'הקלידי שם כדי לראות שיבוצים.';
+
+      if (!hasQuery) {
+        cookSuggestions.innerHTML = '';
+        return;
+      }
+
+      const assignedMotherNames = new Set(assignments.map(item => item.mother));
+      cookSuggestions.innerHTML = Object.values(mothers).map(mother => {
+        if (assignedMotherNames.has(mother.name)) return '';
+        const openSlots = getOpenSlotsForMother(mother);
+        const slotsHtml = openSlots.length
+          ? openSlots.map(slot => `<span class="pill open-slot">${escapeHtml(slot.date)}</span>`).join('')
+          : '<span class="hint">אין כרגע תאריכים פנויים.</span>';
+
+        return `<div class="suggestion-block">
+          <h3>אפשרויות שיבוץ עבור ${escapeHtml(mother.name)}</h3>
+          <div class="suggestion-list">${slotsHtml}</div>
+        </div>`;
+      }).join('');
+    }
+
+    function renderMotherList(motherKey) {
       currentMother = motherKey;
       const mother = mothers[motherKey];
-      search.value = '';
+      const includeOpenSlots = currentRole === 'companion';
+      const rows = includeOpenSlots ? mother.rows : mother.rows.filter(row => normalize(row.cook));
+
+      listSearch.value = '';
       selectedMotherName.textContent = mother.name;
       listTitle.textContent = `רשימת המבשלות של ${mother.name}`;
-      listBadge.textContent = currentRole === 'cook' ? 'בחירת תאריך לבישול' : 'הרשימה שלי';
+      listBadge.textContent = currentRole === 'mother' ? 'אני יולדת' : 'אני מלווה';
 
-      rowsEl.innerHTML = mother.rows.map(row => {
-        const cook = row.cook.trim();
-        const cookHtml = cook ? cook : '<span class="open-slot">פנוי לשיבוץ</span>';
-        return `<tr data-search="${mother.name} ${cook || 'פנוי'} ${row.date}">
-          <td class="name">${cookHtml}</td>
-          <td class="date">${row.date}</td>
+      listRows.innerHTML = rows.map(row => {
+        const cook = normalize(row.cook);
+        const cookHtml = cook ? escapeHtml(row.cook) : '<span class="pill open-slot">פנוי לשיבוץ</span>';
+        return `<tr data-search="${escapeHtml(`${mother.name} ${row.cook || 'פנוי'} ${row.date}`)}">
+          <td data-label="שם המבשלת" class="name">${cookHtml}</td>
+          <td data-label="תאריך" class="date">${escapeHtml(row.date)}</td>
         </tr>`;
       }).join('');
 
-      filterRows();
+      filterListRows();
       showScreen('list');
     }
 
-    function filterRows() {
-      const q = search.value.trim().toLowerCase();
-      const rows = [...rowsEl.querySelectorAll('tr')];
+    function filterListRows() {
+      const q = normalize(listSearch.value);
+      const rows = [...listRows.querySelectorAll('tr')];
       let count = 0;
 
       rows.forEach(row => {
-        const text = row.dataset.search.toLowerCase();
+        const text = normalize(row.dataset.search);
         const show = !q || text.includes(q);
         row.style.display = show ? '' : 'none';
         if (show) count += 1;
       });
 
       visibleCount.textContent = count;
-      empty.style.display = count === 0 ? 'block' : 'none';
+      listEmpty.style.display = count === 0 ? 'block' : 'none';
     }
 
     document.querySelectorAll('[data-role]').forEach(button => {
@@ -482,13 +639,16 @@
     });
 
     document.querySelectorAll('[data-mother]').forEach(button => {
-      button.addEventListener('click', () => renderList(button.dataset.mother));
+      button.addEventListener('click', () => renderMotherList(button.dataset.mother));
     });
 
-    document.querySelector('#backToRoles').addEventListener('click', () => showScreen('role'));
-    document.querySelector('#backToMothers').addEventListener('click', () => showScreen('mother'));
-    document.querySelector('#backHome').addEventListener('click', () => showScreen('role'));
-    search.addEventListener('input', filterRows);
+    document.querySelectorAll('[data-go="role"]').forEach(button => {
+      button.addEventListener('click', () => showScreen('role'));
+    });
+
+    document.querySelector('#backToMothers').addEventListener('click', () => showScreen('selectMother'));
+    cookInput.addEventListener('input', renderCookSearch);
+    listSearch.addEventListener('input', filterListRows);
   </script>
 </body>
 </html>
