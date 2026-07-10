@@ -1087,7 +1087,7 @@
 
       listRows.innerHTML = rows.map(row => {
         const cook = normalize(row.cook);
-        const cookHtml = cook ? escapeHtml(row.cook) : signupLink(row, 'פנוי לשיבוץ — לחצי להשתבצות', mother.name);
+        const cookHtml = cook ? escapeHtml(row.cook) : '<span class="pill open-slot">פנוי לשיבוץ</span>';
         return `<tr class="${isPastDate(row.date) ? 'past' : ''}" data-search="${escapeHtml(`${mother.name} ${row.cook || 'פנוי'} ${row.date} ${row.day}`)}">
           <td data-label="שם המבשלת" class="name">${cookHtml}</td>
           <td data-label="תאריך" class="date">${escapeHtml(row.date)} ${pastNote(row.date)}</td>
