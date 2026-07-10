@@ -269,6 +269,17 @@
     .open-slot { background: var(--green-soft); color: var(--green); }
     .assignment { background: var(--blue-soft); color: var(--blue); }
 
+    .signup-link {
+      text-decoration: none;
+      border: 1px solid rgba(21, 128, 61, 0.22);
+      transition: transform 140ms ease, box-shadow 140ms ease;
+    }
+
+    .signup-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(21, 128, 61, 0.12);
+    }
+
     .empty {
       display: none;
       padding: 34px 20px;
@@ -408,7 +419,7 @@
       <section class="panel">
         <div class="toolbar single">
           <input class="input" id="cookNameInput" type="search" placeholder="לדוגמה: סמדר, נטע, מירב…" aria-label="שם המבשלת" autocomplete="off" />
-          <p class="cook-help">אם את לא משובצת ליולדת מסוימת, יוצגו לך התאריכים הפנויים לאותה יולדת.</p>
+          <p class="cook-help">אם את לא משובצת ליולדת מסוימת, יוצגו לך התאריכים הפנויים. לחיצה על תאריך פנוי תפתח את הגיליון להשתבצות.</p>
         </div>
 
         <table>
@@ -475,6 +486,7 @@
 
   <script>
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/14ZmelV6_zQOY_7K8E4QLKzhYgWiPdx_q93MHK8zr2u4/gviz/tq?tqx=out:csv&sheet=%D7%91%D7%99%D7%A9%D7%95%D7%9C%20%D7%9C%D7%9E%D7%99%D7%94%20%D7%95%D7%A6%D7%95%D7%A3';
+    const SHEET_EDIT_URL = 'https://docs.google.com/spreadsheets/d/14ZmelV6_zQOY_7K8E4QLKzhYgWiPdx_q93MHK8zr2u4/edit#gid=1368655198';
 
     const mothers = {
       maya: {
@@ -589,10 +601,11 @@
     function rowsFromSheetCsv(csvText) {
       return parseCsv(csvText)
         .slice(1)
-        .map(row => ({
+        .map((row, index) => ({
           date: (row[0] || '').trim(),
           day: (row[1] || '').trim(),
-          cook: (row[2] || '').trim()
+          cook: (row[2] || '').trim(),
+          sheetRow: index + 2
         }))
         .filter(row => row.date && row.day)
         .filter(row => parseLocalDate(row.date) && parseLocalDate(row.date) <= parseLocalDate('5.8.26'));
@@ -649,6 +662,14 @@
 
     function pastNote(value) {
       return isPastDate(value) ? '<span class="past-note">חלף</span>' : '';
+    }
+
+    function sheetEditUrl(row) {
+      return row && row.sheetRow ? `${SHEET_EDIT_URL}&range=C${row.sheetRow}` : SHEET_EDIT_URL;
+    }
+
+    function signupLink(row, label) {
+      return `<a class="pill open-slot signup-link" href="${sheetEditUrl(row)}" target="_blank" rel="noopener">${label}</a>`;
     }
 
     function refreshCurrentView() {
@@ -730,7 +751,7 @@
         if (assignedMotherNames.has(mother.name)) return '';
         const openSlots = getOpenSlotsForMother(mother);
         const slotsHtml = openSlots.length
-          ? openSlots.map(slot => `<span class="pill open-slot">${escapeHtml(slot.date)} (${escapeHtml(slot.day)})</span>`).join('')
+          ? openSlots.map(slot => signupLink(slot, `${escapeHtml(slot.date)} (${escapeHtml(slot.day)}) — להשתבצות`)).join('')
           : '<span class="hint">אין כרגע תאריכים פנויים.</span>';
 
         return `<div class="suggestion-block">
@@ -753,7 +774,7 @@
 
       listRows.innerHTML = rows.map(row => {
         const cook = normalize(row.cook);
-        const cookHtml = cook ? escapeHtml(row.cook) : '<span class="pill open-slot">פנוי לשיבוץ</span>';
+        const cookHtml = cook ? escapeHtml(row.cook) : signupLink(row, 'פנוי לשיבוץ — לחצי להשתבצות');
         return `<tr class="${isPastDate(row.date) ? 'past' : ''}" data-search="${escapeHtml(`${mother.name} ${row.cook || 'פנוי'} ${row.date} ${row.day}`)}">
           <td data-label="שם המבשלת" class="name">${cookHtml}</td>
           <td data-label="תאריך" class="date">${escapeHtml(row.date)} ${pastNote(row.date)}</td>
