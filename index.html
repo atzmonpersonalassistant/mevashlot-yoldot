@@ -234,6 +234,24 @@
     td { font-size: 17px; }
     tr:last-child td { border-bottom: none; }
 
+    tr.past {
+      background: rgba(120, 113, 108, 0.08);
+      color: rgba(47, 36, 31, 0.56);
+    }
+
+    tr.past .date,
+    tr.past .name {
+      color: rgba(47, 36, 31, 0.56);
+    }
+
+    .past-note {
+      display: inline-flex;
+      margin-inline-start: 8px;
+      color: #78716c;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
     .name { font-weight: 850; }
     .date { color: var(--muted); white-space: nowrap; }
 
@@ -350,6 +368,7 @@
           <span class="choice-icon">🤱</span>
           <span class="choice-text">
             <h2>אני יולדת</h2>
+            <p>מזל טוב</p>
           </span>
         </button>
       </div>
@@ -520,6 +539,33 @@
       '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
     }[ch]));
 
+    function parseLocalDate(value) {
+      const parts = String(value).split('.').map(part => Number(part));
+      if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
+      const [day, month, rawYear] = parts;
+      const year = rawYear < 100 ? 2000 + rawYear : rawYear;
+      return new Date(year, month - 1, day);
+    }
+
+    function todayStart() {
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+
+    function isPastDate(value) {
+      const date = parseLocalDate(value);
+      return date ? date < todayStart() : false;
+    }
+
+    function isTodayOrFuture(value) {
+      const date = parseLocalDate(value);
+      return date ? date >= todayStart() : true;
+    }
+
+    function pastNote(value) {
+      return isPastDate(value) ? '<span class="past-note">חלף</span>' : '';
+    }
+
     function showScreen(name) {
       Object.values(screens).forEach(screen => screen.classList.remove('active'));
       screens[name].classList.add('active');
@@ -552,13 +598,13 @@
 
       return Object.values(mothers).flatMap(mother =>
         mother.rows
-          .filter(row => row.cook && normalize(row.cook).includes(q))
-          .map(row => ({ mother: mother.name, cook: row.cook, date: row.date, day: row.day }))
+          .filter(row => row.cook && normalize(row.cook).includes(q) && isTodayOrFuture(row.date))
+          .map(row => ({ mother: mother.name, cook: row.cook, date: row.date, day: row.day, isPast: isPastDate(row.date) }))
       );
     }
 
     function getOpenSlotsForMother(mother) {
-      return mother.rows.filter(row => !normalize(row.cook));
+      return mother.rows.filter(row => !normalize(row.cook) && isTodayOrFuture(row.date));
     }
 
     function renderCookSearch() {
@@ -567,10 +613,10 @@
       const hasQuery = normalize(query).length > 0;
 
       cookRows.innerHTML = assignments.map(item => `
-        <tr>
+        <tr class="${item.isPast ? 'past' : ''}">
           <td data-label="יולדת"><span class="pill assignment">${escapeHtml(item.mother)}</span></td>
           <td data-label="שם המבשלת" class="name">${escapeHtml(item.cook)}</td>
-          <td data-label="תאריך" class="date">${escapeHtml(item.date)}</td>
+          <td data-label="תאריך" class="date">${escapeHtml(item.date)} ${pastNote(item.date)}</td>
           <td data-label="יום בשבוע">${escapeHtml(item.day)}</td>
         </tr>
       `).join('');
@@ -614,9 +660,9 @@
       listRows.innerHTML = rows.map(row => {
         const cook = normalize(row.cook);
         const cookHtml = cook ? escapeHtml(row.cook) : '<span class="pill open-slot">פנוי לשיבוץ</span>';
-        return `<tr data-search="${escapeHtml(`${mother.name} ${row.cook || 'פנוי'} ${row.date} ${row.day}`)}">
+        return `<tr class="${isPastDate(row.date) ? 'past' : ''}" data-search="${escapeHtml(`${mother.name} ${row.cook || 'פנוי'} ${row.date} ${row.day}`)}">
           <td data-label="שם המבשלת" class="name">${cookHtml}</td>
-          <td data-label="תאריך" class="date">${escapeHtml(row.date)}</td>
+          <td data-label="תאריך" class="date">${escapeHtml(row.date)} ${pastNote(row.date)}</td>
           <td data-label="יום בשבוע">${escapeHtml(row.day)}</td>
         </tr>`;
       }).join('');
