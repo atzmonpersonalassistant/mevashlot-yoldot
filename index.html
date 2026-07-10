@@ -281,6 +281,29 @@
       box-shadow: 0 8px 20px rgba(21, 128, 61, 0.12);
     }
 
+    .hidden { display: none !important; }
+
+    .signup-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .signup-options .signup-cell {
+      display: block;
+    }
+
+    .signup-options .signup-link {
+      width: 100%;
+      justify-content: center;
+      padding: 14px 16px;
+      border-radius: 18px;
+    }
+
+    .signup-options .signup-card {
+      margin-top: 10px;
+    }
+
     .signup-link[disabled] {
       opacity: 0.55;
       cursor: not-allowed;
@@ -467,7 +490,7 @@
           <span class="choice-icon">🍲</span>
           <span class="choice-text">
             <h2>אני מבשלת</h2>
-            <p>הקלידי את שמך וראי לאילו יולדות את משובצת ובאילו תאריכים.</p>
+            <p>חפשי שיבוץ קיים או בחרי תאריך פנוי להשתבצות.</p>
           </span>
         </button>
 
@@ -489,21 +512,42 @@
       </div>
     </section>
 
-    <section id="cookScreen" class="screen" aria-label="חיפוש מבשלת">
+    <section id="cookScreen" class="screen" aria-label="אפשרויות מבשלת">
       <header>
         <div class="badge">אני מבשלת</div>
-        <h1>מה השם שלך?</h1>
-        <p class="subtitle">התחילי להקליד את שמך. התוצאות יתעדכנו תוך כדי הקלדה.</p>
+        <h1>מה תרצי לעשות?</h1>
+        <p class="subtitle">אפשר לחפש שיבוץ קיים, או לבחור תאריך פנוי להשתבצות.</p>
       </header>
 
       <div class="nav">
         <button class="back" type="button" data-go="role">חזרה</button>
       </div>
 
-      <section class="panel">
+      <div id="cookActionChoices" class="choice-grid">
+        <button class="choice" type="button" data-cook-action="search">
+          <span class="choice-icon">🔎</span>
+          <span class="choice-text">
+            <h2>לחפש את השיבוץ שלי</h2>
+            <p>הקלידי את שמך וראי איפה ומתי את משובצת.</p>
+          </span>
+        </button>
+
+        <button class="choice" type="button" data-cook-action="signup">
+          <span class="choice-icon">✍️</span>
+          <span class="choice-text">
+            <h2>להשתבץ</h2>
+            <p>בחרי יולדת ותאריך פנוי, ואז הזיני את שמך.</p>
+          </span>
+        </button>
+      </div>
+
+      <section id="cookSearchPanel" class="panel hidden">
+        <div class="nav">
+          <button class="back" type="button" data-cook-back>בחזרה לבחירה</button>
+        </div>
         <div class="toolbar single">
           <input class="input" id="cookNameInput" type="search" placeholder="לדוגמה: סמדר, נטע, מירב…" aria-label="שם המבשלת" autocomplete="off" />
-          <p class="cook-help">אם את לא משובצת ליולדת מסוימת, יוצגו לך התאריכים הפנויים. לחיצה על תאריך פנוי תפתח חלון השתבצות בתוך האתר.</p>
+          <p class="cook-help">כאן מוצגים רק שיבוצים קיימים לפי השם שהקלדת. תאריכים פנויים נמצאים במסלול “להשתבץ”.</p>
         </div>
 
         <table>
@@ -518,7 +562,16 @@
           <tbody id="cookRows"></tbody>
         </table>
         <div class="empty" id="cookEmpty">הקלידי שם כדי לראות שיבוצים.</div>
-        <div class="suggestions" id="cookSuggestions"></div>
+      </section>
+
+      <section id="cookSignupPanel" class="panel hidden">
+        <div class="nav">
+          <button class="back" type="button" data-cook-back>בחזרה לבחירה</button>
+        </div>
+        <h2>בחרי תאריך פנוי</h2>
+        <p class="subtitle">בחרי יולדת ותאריך, ואז הזיני את שמך. השיבוץ נשמר ישירות ברשימה.</p>
+        <div class="signup-options" id="signupOptions"></div>
+        <div class="empty" id="signupEmpty">אין כרגע תאריכים פנויים.</div>
       </section>
     </section>
 
@@ -625,7 +678,11 @@
     const cookInput = document.querySelector('#cookNameInput');
     const cookRows = document.querySelector('#cookRows');
     const cookEmpty = document.querySelector('#cookEmpty');
-    const cookSuggestions = document.querySelector('#cookSuggestions');
+    const cookActionChoices = document.querySelector('#cookActionChoices');
+    const cookSearchPanel = document.querySelector('#cookSearchPanel');
+    const cookSignupPanel = document.querySelector('#cookSignupPanel');
+    const signupOptions = document.querySelector('#signupOptions');
+    const signupEmpty = document.querySelector('#signupEmpty');
 
     const listRows = document.querySelector('#listRows');
     const listSearch = document.querySelector('#listSearch');
@@ -786,7 +843,8 @@
 
     function rerenderActiveView() {
       if (currentRole === 'cook' && screens.cook.classList.contains('active')) {
-        renderCookSearch();
+        if (!cookSearchPanel.classList.contains('hidden')) renderCookSearch();
+        if (!cookSignupPanel.classList.contains('hidden')) renderSignupOptions();
       } else if ((currentRole === 'companion' || currentRole === 'mother') && currentMother && screens.list.classList.contains('active')) {
         renderMotherList(currentMother, { keepSearch: true, skipScroll: true });
       }
@@ -845,7 +903,8 @@
 
     function refreshCurrentView() {
       if (currentRole === 'cook' && screens.cook.classList.contains('active')) {
-        renderCookSearch();
+        if (!cookSearchPanel.classList.contains('hidden')) renderCookSearch();
+        if (!cookSignupPanel.classList.contains('hidden')) renderSignupOptions();
       }
       if ((currentRole === 'companion' || currentRole === 'mother') && currentMother && screens.list.classList.contains('active')) {
         renderMotherList(currentMother, { keepSearch: true, skipScroll: true });
@@ -863,10 +922,8 @@
       activeSignupKey = '';
 
       if (role === 'cook') {
-        cookInput.value = '';
-        renderCookSearch();
+        resetCookPanels();
         showScreen('cook');
-        setTimeout(() => cookInput.focus(), 120);
         return;
       }
 
@@ -910,27 +967,50 @@
 
       cookEmpty.style.display = hasQuery && assignments.length === 0 ? 'block' : hasQuery ? 'none' : 'block';
       cookEmpty.textContent = hasQuery
-        ? 'לא נמצאו שיבוצים לשם הזה. אפשר לבדוק את התאריכים הפנויים למטה.'
+        ? 'לא נמצאו שיבוצים לשם הזה.'
         : 'הקלידי שם כדי לראות שיבוצים.';
+    }
 
-      if (!hasQuery) {
-        cookSuggestions.innerHTML = '';
-        return;
+    function resetCookPanels() {
+      activeSignupKey = '';
+      cookInput.value = '';
+      cookRows.innerHTML = '';
+      cookEmpty.style.display = 'block';
+      cookEmpty.textContent = 'הקלידי שם כדי לראות שיבוצים.';
+      cookActionChoices.classList.remove('hidden');
+      cookSearchPanel.classList.add('hidden');
+      cookSignupPanel.classList.add('hidden');
+      signupOptions.innerHTML = '';
+      signupEmpty.style.display = 'none';
+    }
+
+    function showCookAction(action) {
+      activeSignupKey = '';
+      cookActionChoices.classList.add('hidden');
+      cookSearchPanel.classList.toggle('hidden', action !== 'search');
+      cookSignupPanel.classList.toggle('hidden', action !== 'signup');
+      if (action === 'search') {
+        renderCookSearch();
+        setTimeout(() => cookInput.focus(), 120);
       }
+      if (action === 'signup') {
+        renderSignupOptions();
+      }
+    }
 
-      const assignedMotherNames = new Set(assignments.map(item => item.mother));
-      cookSuggestions.innerHTML = Object.values(mothers).map(mother => {
-        if (assignedMotherNames.has(mother.name)) return '';
+    function renderSignupOptions() {
+      const blocks = Object.values(mothers).map(mother => {
         const openSlots = getOpenSlotsForMother(mother);
-        const slotsHtml = openSlots.length
-          ? openSlots.map(slot => signupLink(slot, `${escapeHtml(slot.date)} (${escapeHtml(slot.day)}) — להשתבצות`, mother.name)).join('')
-          : '<span class="hint">אין כרגע תאריכים פנויים.</span>';
-
+        if (!openSlots.length) return '';
+        const slotsHtml = openSlots.map(slot => signupLink(slot, `${escapeHtml(mother.name)} · ${escapeHtml(slot.date)} (${escapeHtml(slot.day)})`, mother.name)).join('');
         return `<div class="suggestion-block">
-          <h3>אפשרויות שיבוץ עבור ${escapeHtml(mother.name)}</h3>
-          <div class="suggestion-list">${slotsHtml}</div>
+          <h3>${escapeHtml(mother.name)}</h3>
+          <div class="signup-options">${slotsHtml}</div>
         </div>`;
       }).join('');
+
+      signupOptions.innerHTML = blocks;
+      signupEmpty.style.display = blocks ? 'none' : 'block';
     }
 
     function renderMotherList(motherKey, options = {}) {
@@ -996,6 +1076,12 @@
     });
 
     document.querySelector('#backToMothers').addEventListener('click', () => showScreen('selectMother'));
+    document.querySelectorAll('[data-cook-action]').forEach(button => {
+      button.addEventListener('click', () => showCookAction(button.dataset.cookAction));
+    });
+    document.querySelectorAll('[data-cook-back]').forEach(button => {
+      button.addEventListener('click', resetCookPanels);
+    });
     document.addEventListener('click', event => {
       const button = event.target.closest('[data-signup]');
       if (!button) return;
