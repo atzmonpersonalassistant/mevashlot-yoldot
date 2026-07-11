@@ -282,6 +282,12 @@
 
     .name { font-weight: 850; }
     .date { color: var(--muted); white-space: nowrap; }
+    .days-left {
+      color: var(--accent-dark);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
 
     .pill {
       width: fit-content;
@@ -584,6 +590,7 @@
               <th>שם המבשלת</th>
               <th>תאריך</th>
               <th>יום בשבוע</th>
+              <th>עוד כמה ימים</th>
             </tr>
           </thead>
           <tbody id="cookRows"></tbody>
@@ -639,6 +646,7 @@
               <th>שם המבשלת</th>
               <th>תאריך</th>
               <th>יום בשבוע</th>
+              <th>עוד כמה ימים</th>
             </tr>
           </thead>
           <tbody id="listRows"></tbody>
@@ -889,6 +897,26 @@
       return date ? date > todayStart() : false;
     }
 
+    function daysUntil(value) {
+      const date = parseLocalDate(value);
+      if (!date) return null;
+      const msPerDay = 24 * 60 * 60 * 1000;
+      return Math.round((date - todayStart()) / msPerDay);
+    }
+
+    function daysUntilText(value) {
+      const days = daysUntil(value);
+      if (days === null) return '';
+      if (days < 0) return 'חלף';
+      if (days === 0) return 'היום';
+      if (days === 1) return 'מחר';
+      return `עוד ${days} ימים`;
+    }
+
+    function daysCell(value) {
+      return `<span class="days-left">${escapeHtml(daysUntilText(value))}</span>`;
+    }
+
     function pastNote(value) {
       return isPastDate(value) ? '<span class="past-note">חלף</span>' : '';
     }
@@ -1049,6 +1077,7 @@
           <td data-label="שם המבשלת" class="name">${escapeHtml(item.cook)}</td>
           <td data-label="תאריך" class="date">${escapeHtml(item.date)} ${pastNote(item.date)}</td>
           <td data-label="יום בשבוע">${escapeHtml(item.day)}</td>
+          <td data-label="עוד כמה ימים">${daysCell(item.date)}</td>
         </tr>
       `).join('');
 
@@ -1089,7 +1118,7 @@
       const blocks = Object.values(mothers).map(mother => {
         const openSlots = getOpenSlotsForMother(mother);
         if (!openSlots.length) return '';
-        const slotsHtml = openSlots.map(slot => signupLink(slot, `${escapeHtml(mother.name)} · ${escapeHtml(slot.date)} (${escapeHtml(slot.day)})`, mother.name)).join('');
+        const slotsHtml = openSlots.map(slot => signupLink(slot, `${escapeHtml(mother.name)} · ${escapeHtml(slot.date)} (${escapeHtml(slot.day)}) · ${escapeHtml(daysUntilText(slot.date))}`, mother.name)).join('');
         return `<div class="suggestion-block">
           <h3>${escapeHtml(mother.name)}</h3>
           <div class="signup-options">${slotsHtml}</div>
@@ -1118,6 +1147,7 @@
           <td data-label="שם המבשלת" class="name">${cookHtml}</td>
           <td data-label="תאריך" class="date">${escapeHtml(row.date)} ${pastNote(row.date)}</td>
           <td data-label="יום בשבוע">${escapeHtml(row.day)}</td>
+          <td data-label="עוד כמה ימים">${daysCell(row.date)}</td>
         </tr>`;
       }).join('');
 
