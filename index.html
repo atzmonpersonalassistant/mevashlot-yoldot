@@ -829,6 +829,12 @@
           cook: (row[cookIndex] || '').trim(),
           sheetRow: index + 2
         };
+
+        // Manual correction: Keren already cooked for Maya on 14.7.26, so the
+        // stale live-sheet assignment for 21.7.26 should be treated as open.
+        if (motherName === 'מיה' && item.date === '21.7.26' && item.cook === 'קרן איילון שלח') {
+          item.cook = '';
+        }
         if (!item.date || !item.day) return;
         if (!parseLocalDate(item.date) || parseLocalDate(item.date) > parseLocalDate('5.8.26')) return;
         byMother[motherKey].push(item);
